@@ -4,27 +4,28 @@ import { Error404PageComponent } from './shared/pages/error404-page/error404-pag
 
 const routes: Routes = [
   {
-    path:'login',
-    loadChildren:()=>import('./auth/auth.module').then(m=>m.AuthModule)
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
   {
-    path:'heroes',
-    loadChildren:()=>import('./heroes/heroes.module').then(m=>m.HeroesModule)
+    path: 'heroes',
+    loadChildren: () => import('./heroes/heroes.module').then(m => m.HeroesModule)
   },
   {
-    path:'404',
-   component:Error404PageComponent
+    path: '404',
+    component: Error404PageComponent
   },
   {
-    path:'',
-    redirectTo:'login',
-    pathMatch:'full'
+    path: '',
+    redirectTo: 'heroes',
+    pathMatch: 'full'
   },
   {
-    path:'**',
-    redirectTo:'404',
+    path: '**',
+    redirectTo: '404',
+  }
 
-  },
+
 ];
 
 @NgModule({
