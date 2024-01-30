@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Publisher } from '../../interface/hero.interface';
+import { HeroesService } from '../../services/heroes.service';
+import { Hero } from '../../interface/hero.interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-page',
@@ -9,6 +12,7 @@ import { Publisher } from '../../interface/hero.interface';
   ]
 })
 export class NewPageComponent {
+
   public heroForm=new FormGroup({
     id:new FormControl<string>(''),
     superhero: new FormControl<string>('',{nonNullable:true}),
@@ -22,11 +26,33 @@ export class NewPageComponent {
     {id:'DC Comics', desc:'DC - Comics'},
     {id:'Marvel Comics', desc:'Marvel - Comics'}
   ]
-  onSubmit():void{
-    console.log({
-      formIsValid:this.heroForm.valid,
-      value:this.heroForm.value
+  constructor(private heroesService:HeroesService,
+    private router:Router) {}
+    ngOnInit():void{
+      if(!this.router.url.includes('edit'))return;
+    }
+
+  get currentHero(): Hero{
+    const hero=this.heroForm.value as Hero;
+    return hero;
+ }
+
+ onSubmit():void{
+  if(this.heroForm.invalid)return;
+
+  if(this.currentHero.id){
+    this.heroesService.UpdateHero(this.currentHero).
+    subscribe(hero=>{
+
+
+    });
+    return;
+  }
+  this.heroesService.addHero(this.currentHero).
+    subscribe(hero=>{
+      //TODO: Mostrar snackbar
     })
   }
 
 }
+//this heroForm.reset(hero);

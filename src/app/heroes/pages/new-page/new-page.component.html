@@ -1,6 +1,6 @@
 <h1>
   Editar/Añadir héroe
-  <small>Superman</small>
+<small>SuperHeroe</small>
 </h1>
 
 <mat-divider class="mb-2"></mat-divider>
@@ -19,6 +19,7 @@
             matInput
             required
             formControlName="superhero"
+
             />
           </mat-form-field>
           <mat-form-field class="col-12 sm:col-6">
@@ -79,7 +80,7 @@
 
   <div class="col-12 sm:col-6">
     <mat-card>
-      <img src="" alt="Imagen del heroe" mat-card-image>
+      <img [src]="currentHero | heroImage" alt="Imagen del heroe" mat-card-image>
     </mat-card>
 
 
@@ -91,3 +92,7 @@
 
 
 </div>
+
+<pre>
+  {{currentHero | json}}
+</pre>
