@@ -6,6 +6,9 @@ import { Hero } from '../../interface/hero.interface';
 import { Router } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+
 
 @Component({
   selector: 'app-new-page',
@@ -29,7 +32,11 @@ export class NewPageComponent {
     {id:'Marvel Comics', desc:'Marvel - Comics'}
   ]
   constructor(private heroesService:HeroesService,
-    private router:Router,private activatedRoute: ActivatedRoute) {}
+    private router:Router,
+    private activatedRoute: ActivatedRoute,
+    private snackbar:MatSnackBar,
+    private dialog:MatDialog
+    ) {}
 
     ngOnInit():void{
       if(!this.router.url.includes('edit'))return;
@@ -55,6 +62,7 @@ export class NewPageComponent {
   if(this.currentHero.id){
     this.heroesService.UpdateHero(this.currentHero).
     subscribe(hero=>{
+      this.showSnackbar(`${hero.superhero} update!`)
 
 
     });
@@ -62,9 +70,20 @@ export class NewPageComponent {
   }
   this.heroesService.addHero(this.currentHero).
     subscribe(hero=>{
-      //TODO: Mostrar snackbar
+      this.showSnackbar(`${hero.superhero} created!`)
     })
   }
+  private showSnackbar(message:string):void{
+    this.snackbar.open(message,'Aceptar', {duration:3000
+  })
 
+}
+public onDeleteHero(){
+  if(!this.currentHero.id)throw Error('Hero id is required')
+
+  const dialogRef=this.dialog.open(DialogOverviewExampleDialog, {
+    data:this.heroForm.value
+  });
+}
 }
 //this heroForm.reset(hero);
