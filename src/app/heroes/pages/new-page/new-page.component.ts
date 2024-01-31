@@ -4,6 +4,8 @@ import { Publisher } from '../../interface/hero.interface';
 import { HeroesService } from '../../services/heroes.service';
 import { Hero } from '../../interface/hero.interface';
 import { Router } from '@angular/router';
+import { switchMap } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-new-page',
@@ -27,9 +29,19 @@ export class NewPageComponent {
     {id:'Marvel Comics', desc:'Marvel - Comics'}
   ]
   constructor(private heroesService:HeroesService,
-    private router:Router) {}
+    private router:Router,private activatedRoute: ActivatedRoute) {}
+
     ngOnInit():void{
       if(!this.router.url.includes('edit'))return;
+
+      this.activatedRoute.params
+    .pipe(
+      switchMap(({id})=>this.heroesService.getHeroeById(id))
+    ).subscribe(hero=>{
+      if(!hero)return this.router.navigate(['/heroes/list']);
+      this.heroForm.reset(hero)
+      return
+    })
     }
 
   get currentHero(): Hero{
