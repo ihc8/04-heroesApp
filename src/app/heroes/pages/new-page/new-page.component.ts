@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Publisher } from '../../interface/hero.interface';
+import { Publisher, Hero } from '../../interface/hero.interface';
 import { HeroesService } from '../../services/heroes.service';
-import { Hero } from '../../interface/hero.interface';
+
 import { Router } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 
 @Component({
@@ -31,7 +32,8 @@ export class NewPageComponent {
     {id:'DC Comics', desc:'DC - Comics'},
     {id:'Marvel Comics', desc:'Marvel - Comics'}
   ]
-  constructor(private heroesService:HeroesService,
+  constructor(
+    private heroesService:HeroesService,
     private router:Router,
     private activatedRoute: ActivatedRoute,
     private snackbar:MatSnackBar,
@@ -79,11 +81,30 @@ export class NewPageComponent {
 
 }
 public onDeleteHero(){
+
   if(!this.currentHero.id)throw Error('Hero id is required')
 
-  const dialogRef=this.dialog.open(DialogOverviewExampleDialog, {
+  const dialogRef=this.dialog.open(ConfirmDialogComponent, {
     data:this.heroForm.value
   });
+  dialogRef.afterClosed().subscribe(result=>{
+    console.log("The dialog cerrando");
+    console.log({result});
+
+    if(result){
+      this.heroesService.DeleteHero(this.currentHero.id).
+      subscribe(hero=>{
+        console.log("Hero eliminado correctamente");
+        this.router.navigate(['/heroes']);
+        this.showSnackbar("Eliminado Correctamente")
+      },
+      (error) => {
+        console.error("Error deleting hero", error);
+        this.showSnackbar("Error eliminando héroe");
+      }
+      )
+    }
+  })
 }
 }
-//this heroForm.reset(hero);
+

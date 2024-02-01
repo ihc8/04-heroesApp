@@ -32,8 +32,8 @@ UpdateHero(hero:Hero):Observable<Hero>{
 DeleteHero(id:string):Observable<boolean>{
  return this.http.delete(`${this.baseUrl}/heroes/${id}`)
  .pipe(
-  catchError(error => of(false)),
-  map(response =>true)
+  map(respone=>true),
+  catchError(response =>of(false))
   )
 }
 
