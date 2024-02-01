@@ -13,6 +13,7 @@ export class ConfirmDialogComponent {
   constructor(public DialogRef:MatDialogRef<ConfirmDialogComponent>,
   @Inject(MAT_DIALOG_DATA)public data:Hero
   ){}
+
   onNoClick():void{
     this.DialogRef.close(false);
   }

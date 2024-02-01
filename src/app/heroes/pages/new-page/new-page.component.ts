@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { DialogRef } from '@angular/cdk/dialog';
 
 
 @Component({
@@ -80,31 +81,38 @@ export class NewPageComponent {
   })
 
 }
-public onDeleteHero(){
+public onDeleteHero() {
+  if (!this.currentHero.id) {
+    throw new Error('Hero id is required');
+  }
 
-  if(!this.currentHero.id)throw Error('Hero id is required')
-
-  const dialogRef=this.dialog.open(ConfirmDialogComponent, {
-    data:this.heroForm.value
+  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    data: this.heroForm.value,
   });
-  dialogRef.afterClosed().subscribe(result=>{
-    console.log("The dialog cerrando");
-    console.log({result});
 
-    if(result){
-      this.heroesService.DeleteHero(this.currentHero.id).
-      subscribe(hero=>{
-        console.log("Hero eliminado correctamente");
-        this.router.navigate(['/heroes']);
-        this.showSnackbar("Eliminado Correctamente")
-      },
-      (error) => {
-        console.error("Error deleting hero", error);
-        this.showSnackbar("Error eliminando héroe");
-      }
-      )
+  dialogRef.afterClosed().subscribe(result => {
+
+
+    if (!result) {
+      this.showSnackbar("No se ha podido eliminar el héroe");
+      this.router.navigate(['/heroes']);
+    } else {
+      this.heroesService.DeleteHero(this.currentHero.id).subscribe((result) => {
+        if(result){
+          this.showSnackbar("Héroe eliminado");
+          this.router.navigate(['/heroes']);
+        }else{
+          this.showSnackbar("Error al eliminar el héroe")
+        }
+
+      });
     }
-  })
+  });
 }
+
+
+
+
+
 }
 
